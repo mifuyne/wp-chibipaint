@@ -1,4 +1,4 @@
-wp-chibipaint
+Chibipaint for Wordpress (wp-chibipaint)
 =============
 
 Wordpress plugin for Chibipaint integration
