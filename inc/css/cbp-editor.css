@@ -1,0 +1,23 @@
+/* 
+    Document   : cbp-editor
+    Created on : Apr 19, 2013, 1:06:01 AM
+    Author     : Mifuyne
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.cbp-editor-container { 
+    margin-bottom: 20px;
+}
+
+#cbp-editor-dimensions {
+	border-width: 1px 0;
+	border-bottom-color: #dfdfdf;
+}
+
+#cbp-editor-action {
+	padding: 5px 0;
+	margin: 5px 0;
+	border-width: 1px 0;
+	border-top-color: #fff;
+}
