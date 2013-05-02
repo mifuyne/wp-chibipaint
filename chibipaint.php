@@ -18,25 +18,8 @@ add_filter( 'pre_get_posts', 'cbp_get_posts' );
 function cbp_editor() {
 	// add_meta_box('chibipaint_metabox', 'Chibipaint', 'cbp_display_metabox', 'sketches', 'normal', 'high');
     if('sketches' == get_post_type()) { // Change Sketches to whatever the user set Custom Post Type slug to
-        ?>
-    <div class="cbp-editor-container postbox">
-		<div class="handlediv" title="Click to toggle"><br /></div><span><h3>Chibipaint</h3></span>
-		<div class="inside">
-			<div id="cbp-editor-options">
-				<div id="cbp-editor-dimensions">
-					<h4>Dimensions</h4>
-					<label for="cbp-canvas-width">W: </label><input type="number" size="5" name="cbp-canvas-width" id="cbp-canvas-width" class="small-text cbp-input-dimension-width" min="1" value="1"/> x
-					<label for="cbp-canvas-height">H: </label><input type="number" size="5" name="cbp-canvas-height" id="cbp-canvas-height" class="small-text cbp-input-dimension-height" min="1" value="1"/> pixels 
-				</div>
-				<div id="cbp-editor-action">
-					<input type="button" name="cbp-canvas-start" id="cbp-canvas-start" class="button button-primary button-large" value="Start Chibipaint" />
-				</div>
-			</div>
-			<div id="cbp-canvas">
-			</div>
-		</div>
-    </div>
-    <?php
+		// The form display has been moved to the cbp_editor class
+		cbp_canvas();
     }
 }
 
@@ -107,7 +90,7 @@ function cbp_create_pt() {
  
             'public' => true,
             'menu_position' => 5,
-            'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'custom-fields' ),
+            'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'custom-fields', 'revisions' ),
             'taxonomies' => array( 'category', 'post_tag' ),
             'has_archive' => true
         )
@@ -124,7 +107,8 @@ function cbp_get_posts( $query ) {
 }
 
 // REQUIRED FILES -- NOT REQUIRED YET!
-// require_once(dirname(__FILE__).'/inc/cbp_options.php'); // The options/settings screen
+require_once(dirname(__FILE__).'/inc/cbp_options.php'); // The options/settings screen
+require_once(dirname(__FILE__).'/inc/cbp_editor.php'); // The editor class
 
 // Preparatory code if we're opening up the admin page
 if (is_admin()) {
