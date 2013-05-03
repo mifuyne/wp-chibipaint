@@ -15,8 +15,10 @@ function cbp_canvas(){
 ?>
     <div class="cbp-editor-container postbox">
 		<div class="handlediv" title="Click to toggle"><br /></div><span><h3>Chibipaint</h3></span>
+		<div id="cbp-results" class="inside"></div>
+		<iframe id="cbp-iframe-results" seamless <?php if ($_GET['action'] == 'edit') { echo 'src="../wp-content/plugins/wp-chibipaint/inc/cbp_results.php?post=' . $_GET['post'] . '"'; } ?>></iframe> <!-- http://www.sitepoint.com/forums/showthread.php?231385-Target-a-link-to-a-Div-tag -->
 		<div id="cbp-canvas-container" class="inside">
-			<div id="cbp-editor-options">
+			<div id="cbp-editor-options" <?php if ($_GET['action'] == 'edit') echo 'style="display: none;"' ?>>
 				<div id="cbp-editor-dimensions">
 					<h4>Dimensions</h4>
 					<input type="hidden" name="cbp-curr-page" id="cbp-curr-page" value="<?php echo $_SERVER['REQUEST_URI']; ?>" />
@@ -31,7 +33,6 @@ function cbp_canvas(){
 			<div id="cbp-canvas">
 			</div>
 		</div>
-		<iframe id="cbp-results" seamless></iframe> <!-- http://www.sitepoint.com/forums/showthread.php?231385-Target-a-link-to-a-Div-tag -->
     </div>
 <?php
 }

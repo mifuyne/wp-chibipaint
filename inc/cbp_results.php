@@ -4,43 +4,57 @@
 		<title></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	</head>
-<script type='text/javascript' src='http://php.dev/wp/wp-admin/load-scripts.php?c=1&amp;load%5B%5D=jquery,utils,plupload,plupload-html5,plupload-flash,plupload-silverlight,plupload-html4,json2&amp;ver=3.5.1'></script>
-
-<script>
-	jQuery(document).ready(function($) {
-		$('#iframe-link-test').click(function() {
-			// second param describes context (the parent of the iframe)
-			$('#cbp-results', window.parent.document).slideUp();
-			$('#cbp-canvas', window.parent.document).slideDown();
-		});
-	});
-</script>
 	<body>
+		<form>
 <?php
+// TODO: Clean up and remove redundancies (for example, having two arrays that are almost identical
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 // Including the config file to access wordpress api
 $directory	= dirname(dirname(dirname(dirname(dirname(__FILE__)))));
 require_once("$directory/wp-config.php");
+$chi[] = array();
 
-echo "Submission successful! Actually, this page should show the image that was submitted and the option to go back and edit it.";
-$args = array(
+$imgArgs = array(
 	'order' => 'ASC',
-	'post_mime_type' => '',
+ 	'post_mime_type' => 'image',
 	'post_parent' => $_GET['post'],
 	'post_status' => null,
 	'post_type' => 'attachment'
 );
-$attaches = get_children( $args );
+$imgAttaches = get_children( $imgArgs );
 
-foreach($attaches as $attachment) {
-	echo wp_get_attachment_image($attachment->ID, 'full') ." ";
-	// print_r($attachment); // prints the object in human readable form
+$chiArgs = array(
+	'order' => 'ASC',
+	'post_mime_type' => 'application/chi',
+	'post_parent' => $_GET['post'],
+	'post_status' => null,
+	'post_type' => 'attachment'
+);
+$chiAttaches = get_children( $chiArgs );
+
+foreach ($chiAttaches as $chifile) {
+	$chi[] = $chifile->guid;	// Try searching an unfiltered children query for chi files and match by post title
 }
-?> <br />
-		<input type="button" name="iframe-link-test" id="iframe-link-test" class="button button-primary button-large" value="Show Canvas" />
+
+foreach($imgAttaches as $attachment) {
+	print_r($attachment); // prints the object in human readable form
+	foreach ($chiAttaches as $chifile) {
+		if ($chifile->post_title == $attachment->post_title)
+			$chi = $chifile->guid;
+	}
+	if ($attachment->post_mime_type == 'image/png') {
+				?>
+			<div class="cbp-thumbnail">
+				<input type="hidden" name="chifile" id="cbp-chifile" value="" />
+				<label for="<?php echo $attachment->ID; ?>"><?php echo wp_get_attachment_image($attachment->ID, 'thumbnail') ." "; ?></label><br />
+				<input type="radio" name="paintings" id="<?php echo $attachment->ID; ?>" value="<?php echo $chi; ?>" />
+				<label for="<?php echo $attachment->ID; ?>" class="cbp-title"><?php echo $attachment->post_title; ?></label>
+			</div>
+<?php 
+	}
+}
+?>			<br />
+			<input type="button" name="edit-painting" id="edit-painting" class="button button-primary button-large" value="Show Canvas" />
+		</form>
 	</body>
 </html>
