@@ -12,13 +12,21 @@
  */
 
 function cbp_canvas(){
+	// let's see if the post has any attachments (kids)
+	$kidArgs = array(
+ 	'post_mime_type' => 'image',
+	'post_parent' => $_GET['post'],
+	'post_type' => 'attachment'
+	);
+	$kids = get_children( $kidArgs );
+
 ?>
     <div class="cbp-editor-container postbox">
 		<div class="handlediv" title="Click to toggle"><br /></div><span><h3>Chibipaint</h3></span>
 		<div id="cbp-results" class="inside"></div>
-		<iframe id="cbp-iframe-results" seamless <?php if ($_GET['action'] == 'edit') { echo 'src="../wp-content/plugins/wp-chibipaint/inc/cbp_results.php?post=' . $_GET['post'] . '"'; } ?>></iframe> <!-- http://www.sitepoint.com/forums/showthread.php?231385-Target-a-link-to-a-Div-tag -->
+		<iframe id="cbp-iframe-results" seamless <?php if ($_GET['action'] == 'edit' && !empty($kids)) { echo 'src="../wp-content/plugins/wp-chibipaint/inc/cbp_results.php?post=' . $_GET['post'] . '"'; } ?>></iframe> <!-- http://www.sitepoint.com/forums/showthread.php?231385-Target-a-link-to-a-Div-tag -->
 		<div id="cbp-canvas-container" class="inside">
-			<div id="cbp-editor-options" <?php if ($_GET['action'] == 'edit') echo 'style="display: none;"' ?>>
+			<div id="cbp-editor-options" <?php if ($_GET['action'] == 'edit' && !empty($kids)) echo 'style="display: none;"' ?>>
 				<div id="cbp-editor-dimensions">
 					<h4>Dimensions</h4>
 					<input type="hidden" name="cbp-curr-page" id="cbp-curr-page" value="<?php echo $_SERVER['REQUEST_URI']; ?>" />

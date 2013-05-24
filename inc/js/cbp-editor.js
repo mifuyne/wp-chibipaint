@@ -43,12 +43,11 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 	divHide.slideUp();
 	var width = 250;
 	var height = 250;
-	var pid = 0;
 	if (opts['width']) width = opts['width'];
 	if (opts['height']) height = opts['height'];
-	if (opts['chi']) chi = opts['chi'];
-	if (opts['pid']) pid = '&pid=' + opts['pid'];
-	if (opts['name']) name = '&name=' + opts['name'];
+	if (opts['chi']) var chi = opts['chi'];
+	if (opts['name']) var name = '&name=' + opts['name'];
+	if (opts['pid']) var pid = '&pid=' + opts['pid'];
 	
 	if (!isEdit) {
 		params =	'canvasWidth="' + width + '"\n\

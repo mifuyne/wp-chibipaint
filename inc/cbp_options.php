@@ -1,4 +1,33 @@
 <?php
+/**
+ * Register options
+ */
+function cbp_options_init() {
+	
+	/* TODO:	Create options
+	 *			Canvas Dimension options should be added via AJAX (figure out how)
+	 *			-- templates -> future feature
+	 *			
+	 */
+	// Create the option page(s)
+    if(function_exists('add_options_page')) {
+		add_options_page('ChibiPaint', 'Chibipaint', 'manage_options', 'chibipaint', 'cbp_options');
+    }
+	
+	// option registrations
+	register_setting('chibipaint_options', 'chibipaint_options', 'cbp_options_validate');
+	
+	// Dimension Options
+	add_settings_section('cbp_options_dimensions', 'Canvas Dimensions', 'cbp_options_dimensions', 'chibipaint');
+	add_settings_field('cbp_opt_width_int', 'Width', 'cbp_options_int', 'chibipaint', 'cbp_options_dimensions');
+	
+	// File Handling
+	add_settings_section('plugin_filing', 'File Handling', 'cbp_options_filing', 'chibipaint');
+}
+
+function cbp_options_validate($input) {
+	// Input validation codes here
+}
 
 /**
  * Prints the option screen for the plugin
@@ -11,31 +40,29 @@ function cbp_options() {
     <h2>Chibipaint for Wordpress</h2>
 
     <h3 class="title">Dimensions</h3>
-    <div>
-        <form method="post" action="cbp_options.php">
-            <table class="form-table">
-                <tbody>
-                    <tr>
-                        <th scope="row">Add Dimension</td>
-                        <td>
-							<input type="number" size="5" name="width" class="small-text cbp-input-dimension-width" min="1" value="1"/> x 
-							<input type="number" size="5" name="height" class="small-text cbp-input-dimension-height" min="1" value="1"/> pixels 
-							<input type="button" button class="button action cbp-ajax-action" name="cbp_addDimensions" value="Add" />
-							<span class="loading" style="display:none"><img src="<?php echo plugin_dir_url( __FILE__ ) ?>../imgs/musicnote-block.gif" /></span>
-						</td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-        <p>Table of Dimensions:</p>
-
-    </div>
-
-    <h3 class="title">File Handling</h3>
-
-    <h3 class="title">Misc</h3>
+	<form method="post" action="cbp_options.php">
+		<?php
+		settings_fields('chibipaint_options');
+		do_settings_sections('chibipaint');
+		?>
+		<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" class="button button-primary"/>
+	</form>
 </div>
 <?php
+}
+
+function cbp_options_dimensions() {
+
+}
+
+function cbp_options_filing() {
+	echo "<p>File Handling options here</p>";
+}
+
+// Form fields
+function cbp_options_int() {
+	$options = get_option('plugin_options');
+	echo "<input id='cbp_opt_width_int' name='chibipaint_options[text_string]' size='25' type='text' value='{$options['text_string']}' />";
 }
 
 function cbp_options_ajax_request() {

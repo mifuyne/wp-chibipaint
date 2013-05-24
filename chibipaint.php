@@ -11,12 +11,13 @@
 
 // show all chibipaint posts on front page, this one is for the front-end so we're not going to do an admin panel check
 add_filter( 'pre_get_posts', 'cbp_get_posts' );
+add_action('init', 'cbp_create_pt');
 
 /**
  * Adds the chibipaint applet to the custom post type, "Sketches"
  */
 function cbp_editor() {
-	// add_meta_box('chibipaint_metabox', 'Chibipaint', 'cbp_display_metabox', 'sketches', 'normal', 'high');
+	// add_meta_box('chibipaint_metabox', 'Chibipaint', 'cbp_display_metabox', 'Sketches', 'normal', 'high');
     if('sketches' == get_post_type()) { // Change Sketches to whatever the user set Custom Post Type slug to
 		// The form display has been moved to the cbp_editor class
 		cbp_canvas();
@@ -90,7 +91,7 @@ function cbp_create_pt() {
  
             'public' => true,
             'menu_position' => 5,
-            'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'custom-fields', 'revisions' ),
+            'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'custom-fields' ),
             'taxonomies' => array( 'category', 'post_tag' ),
             'has_archive' => true
         )
@@ -101,7 +102,7 @@ function cbp_create_pt() {
 function cbp_get_posts( $query ) {
 
 	if ( is_home() && $query->is_main_query() )
-		$query->set( 'post_type', array( 'post', 'page', 'sketches' ) );
+		$query->set( 'post_type', array( 'post', 'sketches' ) );
 
 	return $query;
 }
@@ -112,8 +113,6 @@ require_once(dirname(__FILE__).'/inc/cbp_editor.php'); // The editor class
 
 // Preparatory code if we're opening up the admin page
 if (is_admin()) {
-	
-	add_action('init', 'cbp_create_pt');
 	add_action('edit_form_after_title', 'cbp_editor');
 	add_action('admin_enqueue_scripts', 'cbp_load_scripts');
 	

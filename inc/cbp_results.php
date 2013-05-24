@@ -37,7 +37,7 @@ foreach ($chiAttaches as $chifile) {
 }
 
 foreach($imgAttaches as $attachment) {
-	print_r($attachment); // prints the object in human readable form
+	// print_r($attachment); // prints the object in human readable form
 	foreach ($chiAttaches as $chifile) {
 		if ($chifile->post_title == $attachment->post_title)
 			$chi = $chifile->guid;

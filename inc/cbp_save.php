@@ -54,15 +54,20 @@ function cbp_save($dir) {
 			'post_content' => '',
 			'post_status' => 'inherit'
 		);
-		
+				
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
 		if ($_GET['pid']) {
 			$attach_id = $_GET['pid'];
+			$imgname = get_attached_file($_GET['pid']);
 		} else {
 			$attach_id = wp_insert_attachment( $attach, $imgname, $parentpost);
 		}
-		require_once(ABSPATH . 'wp-admin/includes/image.php');
+		echo "Attach ID: " . $attach_id;
 		$attach_data = wp_generate_attachment_metadata( $attach_id, $imgname );
-		wp_update_attachment_metadata( $attach_id, $attach_data );
+		echo "\nAttach metadata: ";
+		print_r($attach_data);
+		$attach_results = wp_update_attachment_metadata( $attach_id, $attach_data );
+		echo "Update results: " . $attach_results;
 		
 		// if the user chose to save the image with the source:
 		if (isset($_FILES["chibifile"])) {
@@ -77,14 +82,14 @@ function cbp_save($dir) {
 				'post_content' => '',
 				'post_status' => 'inherit'
 			);
-			if ($_GET['pid']) {
-				$attach_id = $_GET['pid'];
-			} else {
+			
+			if (!$_GET['pid']) {
 				$attach_id = wp_insert_attachment( $chiAttach, $chiname, $parentpost);
+
+				require_once(ABSPATH . 'wp-admin/includes/file.php');
+				$attach_data = wp_generate_attachment_metadata( $attach_id, $chiname );
+				wp_update_attachment_metadata( $attach_id, $attach_data );
 			}
-			require_once(ABSPATH . 'wp-admin/includes/file.php');
-			$attach_data = wp_generate_attachment_metadata( $attach_id, $chiname );
-			wp_update_attachment_metadata( $attach_id, $attach_data );
 		}
 	} else {
 		echo "CHIBIERROR\n";
