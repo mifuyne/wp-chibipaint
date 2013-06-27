@@ -14,22 +14,25 @@ require_once("$directory/wp-config.php");
 ob_start();
 
 if (isset($_FILES['picture'])) {
-	cbp_save($directory);
+	cbp_save();
 } else {
 	echo "NO DATA!";
 }
 
 // TODO: CLEAN UP, try and keep variables with conditional data in if statements while the rest are out
-function cbp_save($dir) {
+function cbp_save() {
 	header('Content-type: text/plain');
-	$uploaddir = $dir.'/wp-content/uploads/chibi/';
+	$options = get_option('cbp_options');
+	
+	$dir = wp_upload_dir();
+	$uploaddir = $dir['basedir'] . '/' . $options['cbp_fh_loc'];
 	$file = $_FILES['picture']['name'];
 	$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
 	// if $_GET['name'] is set, then change filename to the name value
-	if ($_GET['name']) {
-		$filename = $_GET['name'];
+	if (!$_GET['edit']) {
+		$filename = $_GET['name'] . date("Y_m_d_U");
 	} else {
-		$filename = date("Y_m_d_U");
+		$filename = $_GET['name'];
 	}
 	$uploadfile = $uploaddir . $filename;
 	$parentpost = $_GET['post'];
@@ -42,6 +45,9 @@ function cbp_save($dir) {
 	if ($success) {
 		echo "CHIBIOK\n";	// might want to move this so that it only says it's successful when the attachment post is made and attached to the post!
 		// attaching image to post
+		
+		echo "Filename: " . $filename;
+		// TODO: (06/27/2013) Give option to use wordpress's method of file sorting, add numbers next to duplicate rather than timestamp?
 		$upload_dir = wp_upload_dir();
 		$imgname = $upload_dir['basedir'] . "/chibi/" . $filename . $ext;
 		$wp_filetype = wp_check_filetype(basename($imgname), null );
@@ -54,7 +60,8 @@ function cbp_save($dir) {
 			'post_content' => '',
 			'post_status' => 'inherit'
 		);
-				
+
+		// TODO 06/27/2013: Name inputted by user as Attachment entry name
 		require_once(ABSPATH . 'wp-admin/includes/image.php');
 		if ($_GET['pid']) {
 			$attach_id = $_GET['pid'];

@@ -1,75 +1,115 @@
 <?php
-/**
- * Register options
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
-function cbp_options_init() {
-	
-	/* TODO:	Create options
-	 *			Canvas Dimension options should be added via AJAX (figure out how)
-	 *			-- templates -> future feature
-	 *			
+// ob_start();
+function cbp_add_options_page() {
+	add_options_page('Chibipaint Integration Settings', 'Chibipaint Integration', 'manage_options', 'options_cbp', 'cbp_display_options_page');
+}
+function cbp_display_options_page() {
+	?>
+	<div>
+	<h2>Chibipaint Integration Settings</h2>
+	All fields are required.
+	<form action="options.php" method="post">
+	<?php settings_fields('cbp_option_group');
+	do_settings_sections('options_cbp');
+	submit_button();
+	?>
+	</form></div>
+
+	<?php
+}
+
+function cbp_options_init(){
+	/* TODO: refer to http://kovshenin.com/2012/the-wordpress-settings-api/ on
+	 * how to pass multiple variables to a function (Reusing Controls with the
+	 * Settings API).
 	 */
-	// Create the option page(s)
-    if(function_exists('add_options_page')) {
-		add_options_page('ChibiPaint', 'Chibipaint', 'manage_options', 'chibipaint', 'cbp_options');
-    }
 	
-	// option registrations
-	register_setting('chibipaint_options', 'chibipaint_options', 'cbp_options_validate');
+	// TODO: (06/16/2013) Dimensions, adding via AJAX
+	$cbpOptions = get_option('cbp_options');
 	
-	// Dimension Options
-	add_settings_section('cbp_options_dimensions', 'Canvas Dimensions', 'cbp_options_dimensions', 'chibipaint');
-	add_settings_field('cbp_opt_width_int', 'Width', 'cbp_options_int', 'chibipaint', 'cbp_options_dimensions');
-	
-	// File Handling
-	add_settings_section('plugin_filing', 'File Handling', 'cbp_options_filing', 'chibipaint');
+	register_setting( 'cbp_option_group', 'cbp_options', 'cbp_validate_options' );
+	add_settings_section('cbp_gen_options', 'General Options', 'cbp_gen_section_text', 'options_cbp');
+	add_settings_field('cbp_post_types', 'Which post types should the editor be available for?', 'cbp_posttype_array', 'options_cbp', 'cbp_gen_options', 
+		array('name' => 'cbp_options[cbp_post_types]',
+			'value' => $cbpOptions["cbp_post_types"]
+		));
+	add_settings_field('cbp_fh_loc', 'Save to? (currently disabled)', 'cbp_string_input', 'options_cbp', 'cbp_gen_options', 
+			array('name' => 'cbp_options[cbp_fh_loc]',
+				'value' => $cbpOptions["cbp_fh_loc"],
+				'prefix' => 'wp-content/uploads/',
+				'id' => 'cbp_fh_loc',
+				'disable' => true
+			));
 }
 
-function cbp_options_validate($input) {
-	// Input validation codes here
+function cbp_gen_section_text() {
+	echo '<p>General options for the integration plugin.</p>';
 }
 
-/**
- * Prints the option screen for the plugin
- */
-function cbp_options() {
-    ?>
+function cbp_string_input( $arg ) {
+	// $arg = name, value, prefix, id, disable (in no order)
+	extract($arg);
 
-<div class="wrap">
-    <?php screen_icon() ?>
-    <h2>Chibipaint for Wordpress</h2>
-
-    <h3 class="title">Dimensions</h3>
-	<form method="post" action="cbp_options.php">
-		<?php
-		settings_fields('chibipaint_options');
-		do_settings_sections('chibipaint');
-		?>
-		<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" class="button button-primary"/>
-	</form>
-</div>
-<?php
-}
-
-function cbp_options_dimensions() {
-
-}
-
-function cbp_options_filing() {
-	echo "<p>File Handling options here</p>";
-}
-
-// Form fields
-function cbp_options_int() {
-	$options = get_option('plugin_options');
-	echo "<input id='cbp_opt_width_int' name='chibipaint_options[text_string]' size='25' type='text' value='{$options['text_string']}' />";
-}
-
-function cbp_options_ajax_request() {
-	if (isset($_POST['post_var'])) {
-		$response = $_POST['post_var'];
-		echo $response;
-		die();
+	$disabled = "";
+	if ($disable) {
+		$disabled = "disabled='disabled'";
 	}
+	
+	$inputField = "<input type='text' name='$name' value='$value' id='$id' $disabled/>";
+	echo "<p>" . $prefix . $inputField . "</p>";
+}
+
+function cbp_posttype_array( $arg ) {
+	extract($arg);
+	
+	$checked = array();
+	
+	$inputField = "<input type='checkbox' name='$name' id='$id' $disabled $checked/>";
+	
+	$posttypes = get_post_types(array('public' => true));
+
+	// Start the list
+	echo "<fieldset><ul class=\"cbp-pt-list\">";
+	foreach ($posttypes as $key => $pt) {
+		if ($value[$key] == "on") $checked[$key] = "checked='checked'";
+		else $checked[$key] = "";
+		
+		// name='".$name."[$key]' creates an an associative array inside the options array for which posts the user wants to enable
+		echo "	<li class='cbp-pt-entry'>
+					<input type='hidden' name='".$name."[$key]' value='off' />
+					<label for='cbp-$pt'><input type='checkbox' name='".$name."[$key]' id='cbp-$pt' $disabled $checked[$key] /> " . ucfirst($pt) . "</label>
+				</li>";
+	}
+	echo "</ul></fieldset>";
+	
+}
+
+function cbp_validate_options($input) {
+	// Output buffer for debug, remove in release
+	ob_start();
+	
+	echo "Input:";
+	print_r($input);
+	
+	$cbpOptions = get_option('cbp_options');
+	$cbpOptions['cbp_post_types'] = array();
+	
+	// assign on or off according to user input
+	foreach($input['cbp_post_types'] as $key => $value) {
+		$cbpOptions['cbp_post_types'][$key] = $input['cbp_post_types'][$key];
+	}
+	
+	echo "CBP Options:";
+	print_r($cbpOptions);
+	
+	$contents = ob_get_flush();
+	file_put_contents(dirname(__FILE__)."/option_log.txt", $contents);
+	
+	return $cbpOptions;
 }
 ?>

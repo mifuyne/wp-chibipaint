@@ -12,7 +12,6 @@
 // Including the config file to access wordpress api
 $directory	= dirname(dirname(dirname(dirname(dirname(__FILE__)))));
 require_once("$directory/wp-config.php");
-$chi[] = array();
 
 $imgArgs = array(
 	'order' => 'ASC',
@@ -32,9 +31,9 @@ $chiArgs = array(
 );
 $chiAttaches = get_children( $chiArgs );
 
-foreach ($chiAttaches as $chifile) {
+/* foreach ($chiAttaches as $chifile) {
 	$chi[] = $chifile->guid;	// Try searching an unfiltered children query for chi files and match by post title
-}
+} */
 
 foreach($imgAttaches as $attachment) {
 	// print_r($attachment); // prints the object in human readable form
@@ -43,12 +42,16 @@ foreach($imgAttaches as $attachment) {
 			$chi = $chifile->guid;
 	}
 	if ($attachment->post_mime_type == 'image/png') {
+		$imgurl = wp_get_attachment_image_src($attachment->ID, 'full');
 				?>
 			<div class="cbp-thumbnail">
-				<input type="hidden" name="chifile" id="cbp-chifile" value="" />
+				<input type="hidden" name="name" id="cbp-name" value="<?php echo $attachment->post_name; ?>" />
+				<input type="hidden" name="pngfile" id="cbp-pngfile" value="<?php echo $imgurl[0]; ?>" />
 				<label for="<?php echo $attachment->ID; ?>"><?php echo wp_get_attachment_image($attachment->ID, 'thumbnail') ." "; ?></label><br />
 				<input type="radio" name="paintings" id="<?php echo $attachment->ID; ?>" value="<?php echo $chi; ?>" />
-				<label for="<?php echo $attachment->ID; ?>" class="cbp-title"><?php echo $attachment->post_title; ?></label>
+				<label for="<?php echo $attachment->ID; ?>" class="cbp-title" style="max-width: 125px; word-wrap: break-word; display: inline-block;">
+					<?php echo $attachment->ID . ". <span>" . $attachment->post_title ."</span>"; ?>
+				</label>
 			</div>
 <?php 
 	}
