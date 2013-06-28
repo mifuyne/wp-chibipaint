@@ -5,6 +5,8 @@
  * and open the template in the editor.
  */
 // ob_start();
+
+// TODO (06/28/2013): Force users to come here and set up!
 function cbp_add_options_page() {
 	add_options_page('Chibipaint Integration Settings', 'Chibipaint Integration', 'manage_options', 'options_cbp', 'cbp_display_options_page');
 }
@@ -42,8 +44,7 @@ function cbp_options_init(){
 			array('name' => 'cbp_options[cbp_fh_loc]',
 				'value' => $cbpOptions["cbp_fh_loc"],
 				'prefix' => 'wp-content/uploads/',
-				'id' => 'cbp_fh_loc',
-				'disable' => true
+				'id' => 'cbp_fh_loc'
 			));
 }
 
@@ -103,6 +104,8 @@ function cbp_validate_options($input) {
 	foreach($input['cbp_post_types'] as $key => $value) {
 		$cbpOptions['cbp_post_types'][$key] = $input['cbp_post_types'][$key];
 	}
+	
+	$cbpOptions['cbp_fh_loc'] = sanitize_text_field($input['cbp_fh_loc']);
 	
 	echo "CBP Options:";
 	print_r($cbpOptions);

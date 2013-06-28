@@ -3,15 +3,10 @@
  * wordpress's root directory in a file that isn't being called by wordpress
  * -_- Also, require_once is slowing down the script :(
  */
+ob_start();
+
 $directory	= dirname(dirname(dirname(dirname(dirname(__FILE__)))));
 require_once("$directory/wp-config.php");
-
-
-/* line 13: Since I have no way of determining what goes wrong in this script, I'm saving
- * output of all kinds to a file called log.txt, located in the same directory
- * as this file.
- */
-ob_start();
 
 if (isset($_FILES['picture'])) {
 	cbp_save();
@@ -25,12 +20,16 @@ function cbp_save() {
 	$options = get_option('cbp_options');
 	
 	$dir = wp_upload_dir();
-	$uploaddir = $dir['basedir'] . '/' . $options['cbp_fh_loc'];
+	if ($options['cbp_fh_loc']) 
+		$uploaddir = $dir['basedir'] . '/' . $options['cbp_fh_loc'];
+	else 
+		$uploaddir = $dir['path'] . '/';
+	// echo $uploaddir;
 	$file = $_FILES['picture']['name'];
 	$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
 	// if $_GET['name'] is set, then change filename to the name value
 	if (!$_GET['edit']) {
-		$filename = $_GET['name'] . date("Y_m_d_U");
+		$filename = preg_replace('/[^a-z0-9]+/i', '_', $_GET['name']) . time();
 	} else {
 		$filename = $_GET['name'];
 	}
@@ -43,49 +42,50 @@ function cbp_save() {
 
 	$success = move_uploaded_file($_FILES['picture']['tmp_name'], $uploadfile . $ext);
 	if ($success) {
-		echo "CHIBIOK\n";	// might want to move this so that it only says it's successful when the attachment post is made and attached to the post!
-		// attaching image to post
-		
-		echo "Filename: " . $filename;
-		// TODO: (06/27/2013) Give option to use wordpress's method of file sorting, add numbers next to duplicate rather than timestamp?
-		$upload_dir = wp_upload_dir();
-		$imgname = $upload_dir['basedir'] . "/chibi/" . $filename . $ext;
+		echo "CHIBIOK\n";
+
+		// TODO: (06/27/2013) Give option to use wordpress's method of file sorting
+		$imgname = $uploaddir . $filename . $ext;
 		$wp_filetype = wp_check_filetype(basename($imgname), null );
 		
-		// TODO: Clean this up, use if statements to assign value to variables rather than variables AND actions
 		$attach = array(
-			'guid' => $upload_dir['baseurl'] . "/chibi/" . basename($imgname),
+			'guid' => $uploaddir . basename($imgname),
 			'post_mime_type' => $wp_filetype['type'],
-			'post_title' => preg_replace('/\.[^.]+$/', '', basename($imgname)),
+			'post_title' => $_GET['name'],
+			'post_name' => $filename,
 			'post_content' => '',
 			'post_status' => 'inherit'
 		);
-
-		// TODO 06/27/2013: Name inputted by user as Attachment entry name
+		
+	// ---- Image attaching ----
 		require_once(ABSPATH . 'wp-admin/includes/image.php');
-		if ($_GET['pid']) {
+		// TODO (06/28/2013): When switching folders, this creates a new file entirely.
+		// The title is not the actual title, be sure to fix that in the JS
+		// if the attached file matches 
+		if (get_attached_file($_GET['pid']) == $imgname) {
 			$attach_id = $_GET['pid'];
 			$imgname = get_attached_file($_GET['pid']);
+		} elseif (get_attached_file($_GET['pid']) != $imgname) {
+			global $wpdb;
+			$wpdb->update($wpdb->posts, array('post_parent'=>0), array('id'=>$_GET['pid'], 'post_type'=>'attachment'));
+			$attach_id = wp_insert_attachment( $attach, $imgname, $parentpost);
 		} else {
 			$attach_id = wp_insert_attachment( $attach, $imgname, $parentpost);
 		}
-		echo "Attach ID: " . $attach_id;
 		$attach_data = wp_generate_attachment_metadata( $attach_id, $imgname );
-		echo "\nAttach metadata: ";
-		print_r($attach_data);
 		$attach_results = wp_update_attachment_metadata( $attach_id, $attach_data );
-		echo "Update results: " . $attach_results;
 		
-		// if the user chose to save the image with the source:
-		if (isset($_FILES["chibifile"])) {
+		// TODO (06/28/2013) give user the option to add chi files to the library
+		/* if (isset($_FILES["chibifile"])) {
 			// the codes that attaches the file to the post...it shouldn't be any different than the image attachment codes
-			$chiname = $upload_dir['basedir'] . "/chibi/" . $filename . ".chi";
+			$chiname = $uploaddir . $filename . ".chi";
 			$wp_chitype = wp_check_filetype(basename($chiname), null );
 			
 			$chiAttach = array(
-				'guid' => $upload_dir['baseurl'] . "/chibi/" . basename($chiname),
+				'guid' => $uploaddir . basename($chiname),
 				'post_mime_type' => 'application/chi',
-				'post_title' => preg_replace('/\.[^.]+$/', '', basename($chiname)),
+				'post_title' => $_GET['name'],
+				'post_name' => $filename,
 				'post_content' => '',
 				'post_status' => 'inherit'
 			);
@@ -97,7 +97,8 @@ function cbp_save() {
 				$attach_data = wp_generate_attachment_metadata( $attach_id, $chiname );
 				wp_update_attachment_metadata( $attach_id, $attach_data );
 			}
-		}
+		} */
+
 	} else {
 		echo "CHIBIERROR\n";
 	}

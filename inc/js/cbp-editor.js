@@ -10,27 +10,40 @@ jQuery(document).ready(function ($) {
 								$('#cbp-editor-options'), false,
 								{ 'width': $('#cbp-canvas-width').val(), 'height' : $('#cbp-canvas-height').val(), 'name': $('#cbp-name').val()} );
 	});
-	
+
 	$('#cbp-iframe-results').load(function() {
 		// $(this).slideDown();
 		$('#cbp-canvas').slideUp();
+		$('#cbp-editor-options').slideUp();
 		$('#cbp-results').html($(this).contents().find('body').clone().html());
 		$('#cbp-results').slideDown();
 	});
 	
-	$(document).on('click', '#edit-painting', function() {
+	$(document).on('click', '#cbp-start-new', function() {
 		$('#cbp-results').slideUp();
+		$('#cbp-editor-options').slideDown();
+	});
+	
+	// TODO (06/28/2013) Make sure the user actually selects something before clicking on Edit Image!
+	$(document).on('click', '#cbp-edit-painting', function() {
+		$('#cbp-results').slideUp();
+		postID = $('input[name=paintings]:checked').attr('id')
 		$(this).initializeCanvas($('#cbp-canvas'),
 								$('#cbp-post-id').val(),
 								$('#cbp-editor-options'), true,
-								{	'png' : $('input[name=pngfile]').val(),
-									'chi' : $('input[name=paintings]:checked').val(), 
-									'pid' : $('input[name=paintings]:checked').attr('id'),
+								{	'png' : $('input[id=cbp-png-' + postID + ']').val(),
+									'chi' : $('input[id=cbp-chi-' + postID + ']').val(), 
+									'pid' : $('input[name=paintings]:checked').val(),
 									'edit' : true,
-									'name' : $('label[for=' + $('input[name=paintings]:checked').attr('id') + '][class=cbp-title] span').text()	//convoluted way of finding a post title :(
+									// TODO: (06/28/2013): Get post_title, not post_name
+									'name' : $('input[id=cbp-name-' + postID + ']').val()
 								} );
 		$('#cbp-iframe-results').html('');
-		$('#cbp-canvas').slideDown();
+	});
+	
+	$(document).on('click', '#cbp-canvas-cancel', function() {
+		$('#cbp-canvas').slideUp();
+		$('#cbp-results').slideDown();
 	});
 });
 
@@ -42,9 +55,11 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 	 *	chi (path url)
 	 *	name (if editing)
 	 */
+	canvasDiv.slideDown();
 	divHide.slideUp();
 	var width = 250;
 	var height = 250;
+	var chi = "";
 	// Applet params
 	if (opts['width']) width = 'canvasWidth="'  + opts['width'] + '"\n';
 	if (opts['height']) height = 'canvasHeight="' + opts['height'] + '"\n';
@@ -52,7 +67,8 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 	if (opts['png']) var png = 'loadImage = "' + opts['png'] + '"\n';
 	
 	// postURL parameters
-	if (opts['name']) var name = '&name=' + opts['name'].replace(/[<>:;?@&=+$,\s\/]/ig, "");
+	// if (opts['name']) var name = '&name=' + opts['name'].replace(/[<>:;?@&=+$,\s\/]/ig, "");
+	if (opts['name']) var name = '&name=' + encodeURIComponent(opts['name']);
 	else name = "";
 	if (opts['pid']) var pid = '&pid=' + opts['pid'];
 	else pid = "";
@@ -74,5 +90,6 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 		pluginspage="http://java.com/download/"\n' + params +
 		'postURL="../wp-content/plugins/wp-chibipaint/inc/cbp_save.php?post=' + post + name + pid + edit + '"\n\
 		exitURL="../wp-content/plugins/wp-chibipaint/inc/cbp_results.php?post=' + post + '"\n\
-		exitURLTarget="cbp-iframe-results" />');
+		exitURLTarget="cbp-iframe-results" />\n\
+		<input type="button" name="cbp-canvas-start" id="cbp-canvas-cancel" class="button button-primary button-large" value="Cancel" />');
 };
