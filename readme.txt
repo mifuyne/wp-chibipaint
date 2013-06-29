@@ -1,50 +1,39 @@
-Wordpress plugin for Chibipaint integration
-
-Intro
-=============
-
-The aim is to allow for users to create drawings and sketches directly on the blog without having to upload anything from their computer. The java applet, Chibipaint was developed by Marc Schefer. The applet is available under the GNU Public licence v. 3 and can be downloaded at http://www.chibipaint.com/
-
-This will be a complete rewrite from the version I've made a few years ago, which is still avaialble on Wordpress plugin directory.
-
-
-=== Chibipaint for Wordpress (wp-chibipaint) ===
-Contributors: mifuyne
-Donate link: --
-Tags: admin, chibipaint, drawing, media, painter
+=== Chibipaint for Wordpress ===
+Contributors: mifuyne 
+Tags: painter, chibipaint, admin, media, drawing
 Requires at least: 3.5.1
 Tested up to: 3.5.1
 Stable tag: trunk
-License: GPLv3 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Integrating Chibipaint drawing applet with Wordpress.
+Integrates the Chibipaint applet into Wordpress.
 
 == Description ==
 
-The aim of the plugin is to integrate it with Wordpress's back end. There's no plans for implementing it for comments.
+This plugin integrates Chibipaint into Wordpress, which the user can use with any registered and public post type.
+
+This plugin is largely rewritten. Where the old version integrates with the Add Image feature of Wordpress 2.9.2, this version adds the applet right above the text editor when you create or edit a post.
+
+The Chibipaint applet\'s official website can be found at http://www.chibipaint.com
+
+If you have any questions or issues, feel free to post them in Support or the plugin\'s issue tracker: <a href=\"https://bitbucket.org/Mifuyne/chibipaint-for-wordpress/issues\">https://bitbucket.org/Mifuyne/chibipaint-for-wordpress/issues</a>. The issue tracker is preferred over Support.
 
 == Installation ==
 
-If you downloaded this manually:
+ 
 
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1.  Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation.
+2.  Activate the Plugin from Plugins page.
+3.  Go to Chibipaint > Options to customize the plugin as you see fit
 
-If you're installing this through Wordpress's plugin installer:
+ 
+== Frequently Asked Questions ==
 
-1. Click on the Install button.
-2. Once the plugin's installed, activate the plugin.
-
+Coming soon
 == Changelog ==
-
-= 0.1.2 =
-* Created a new custom post type
-* Applet integration is limited to the post type created by the plugin
-* Applet settings then applet initialization implemented
-* TODO
-	* Image submission is NOT IMPLEMENTED YET. It will in the next update.
-	* Major code clean up.
-
 = 0.1 =
-First re-release of the plugin.
+
+June 28, 2013: The first release of the rewritten plugin. If you wish to see more details on the process prior to release, then visit the git repository at <a href=\"https://bitbucket.org/Mifuyne/chibipaint-for-wordpress\">https://bitbucket.org/Mifuyne/chibipaint-for-wordpress</a>. Cutting edge version of the plugin can be found there.
+
+==Readme Generator== 
+
+This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.

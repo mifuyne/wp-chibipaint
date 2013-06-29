@@ -35,8 +35,8 @@ jQuery(document).ready(function ($) {
 									'chi' : $('input[id=cbp-chi-' + postID + ']').val(), 
 									'pid' : $('input[name=paintings]:checked').val(),
 									'edit' : true,
-									// TODO: (06/28/2013): Get post_title, not post_name
-									'name' : $('input[id=cbp-name-' + postID + ']').val()
+									'name' : $('input[id=cbp-title-' + postID + ']').val(),
+									'slug' : $('input[id=cbp-slug-' + postID + ']').val(),
 								} );
 		$('#cbp-iframe-results').html('');
 	});
@@ -70,6 +70,8 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 	// if (opts['name']) var name = '&name=' + opts['name'].replace(/[<>:;?@&=+$,\s\/]/ig, "");
 	if (opts['name']) var name = '&name=' + encodeURIComponent(opts['name']);
 	else name = "";
+	if (opts['slug']) var slug = '&slug=' + encodeURIComponent(opts['slug']);
+	else slug = "";
 	if (opts['pid']) var pid = '&pid=' + opts['pid'];
 	else pid = "";
 	if (opts['edit']) var edit = '&edit=true';
@@ -88,7 +90,7 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 		archive="../wp-content/plugins/wp-chibipaint/inc/chibipaint.jar"\n\
 		code="chibipaint.ChibiPaint.class"\n\
 		pluginspage="http://java.com/download/"\n' + params +
-		'postURL="../wp-content/plugins/wp-chibipaint/inc/cbp_save.php?post=' + post + name + pid + edit + '"\n\
+		'postURL="../wp-content/plugins/wp-chibipaint/inc/cbp_save.php?post=' + post + name + slug + pid + edit + '"\n\
 		exitURL="../wp-content/plugins/wp-chibipaint/inc/cbp_results.php?post=' + post + '"\n\
 		exitURLTarget="cbp-iframe-results" />\n\
 		<input type="button" name="cbp-canvas-start" id="cbp-canvas-cancel" class="button button-primary button-large" value="Cancel" />');

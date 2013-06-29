@@ -8,23 +8,8 @@
 		<form>
 			<ul class="cbp-thumbnail">
 <?php
-// TODO: Clean up and remove redundancies (for example, having two arrays that are almost identical
+require_once("cbp_common.php");
 
-// Including the config file to access wordpress api
-$directory	= dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-require_once("$directory/wp-config.php");
-
-// check for existing chi file instead of adding it to the media library?
-$options = get_option('cbp_options');
-
-$dir = wp_upload_dir();
-if ($options['cbp_fh_loc']) {
-	$uploaddir = $dir['basedir'] . '/' . $options['cbp_fh_loc'];
-	$uploadurl = $dir['baseurl'] . '/' . $options['cbp_fh_loc'];	
-} else {
-	$uploaddir = $dir['path'] . '/';
-	$uploadurl = $dir['url'] . '/';
-}
 
 $imgArgs = array(
 	'order' => 'ASC',
@@ -50,17 +35,15 @@ $chiAttaches = get_children( $chiArgs );
 foreach($imgAttaches as $attachment) {
 	// print_r($attachment); // prints the object in human readable form
 	// Check if the chi file for this attachment exists, if it does, create a hidden input for it
-	// TODO (06/28/2013) If user choose to add chi as attachment, change the way the script looks for it (check and see if either way is faster)
 	if (file_exists($uploaddir.$attachment->post_name . ".chi")) {
-		// echo "Chi File exists for " . $attachment->post_name . "!";
-		$painting = "<input type=\"hidden\" name=\"chifile\" id=\"cbp-chi-". $attachment->ID ."\" value=\"".$uploadurl.$attachment->post_name.".chi\" />";
-	} else $painting = ""; 
-	
+			$painting = "<input type=\"hidden\" name=\"chifile\" id=\"cbp-chi-". $attachment->ID ."\" value=\"".$uploadurl.$attachment->post_name.".chi\" />";
+	} else $painting = "";	
 	// if ($attachment->post_mime_type == 'image/png') {
 		$imgurl = wp_get_attachment_image_src($attachment->ID, 'full');
 				?>
 				<li>
-					<input type="hidden" name="name" id="cbp-name-<?php echo $attachment->ID; ?>" value="<?php echo $attachment->post_name; ?>" />
+					<input type="hidden" name="slug" id="cbp-slug-<?php echo $attachment->ID; ?>" value="<?php echo $attachment->post_name; ?>" />
+					<input type="hidden" name="title" id="cbp-title-<?php echo $attachment->ID; ?>" value="<?php echo $attachment->post_title; ?>" />
 					<input type="hidden" name="pngfile" id="cbp-png-<?php echo $attachment->ID; ?>" value="<?php echo $imgurl[0]; ?>" />
 					<?php echo $painting; ?>
 					<label for="<?php echo $attachment->ID; ?>"><?php echo wp_get_attachment_image($attachment->ID, 'thumbnail') ." "; ?></label><br />
