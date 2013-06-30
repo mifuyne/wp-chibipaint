@@ -25,11 +25,10 @@ If you have any questions or issues, feel free to post them in Support or the pl
 2.  Activate the Plugin from Plugins page.
 3.  Go to Chibipaint > Options to customize the plugin as you see fit
 
- 
-== Frequently Asked Questions ==
-
-Coming soon
 == Changelog ==
+= 2.0.1 =
+June 30, 2013: Fixed a path error in the script that renders the applet itself.
+
 = 2.0 =
 June 30, 2013: Re-numbered the version to avoid confusion. It is now 2.0, which seems a bit more appropriate. Sorry about the extra update for those who installed already.
 
