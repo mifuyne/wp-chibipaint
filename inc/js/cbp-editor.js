@@ -87,11 +87,11 @@ jQuery.fn.initializeCanvas = function(canvasDiv, post, divHide, isEdit, opts) {	
 	canvasDiv.html('<embed id="chibipaint"\n\
 		type="application/x-java-applet;version=1.7"\n\
 		width="100%" height="600"\n\
-		archive="../wp-content/plugins/wp-chibipaint/inc/chibipaint.jar"\n\
+		archive="../wp-content/plugins/chibipaint-for-wordpress/inc/chibipaint.jar"\n\
 		code="chibipaint.ChibiPaint.class"\n\
 		pluginspage="http://java.com/download/"\n' + params +
-		'postURL="../wp-content/plugins/wp-chibipaint/inc/cbp_save.php?post=' + post + name + slug + pid + edit + '"\n\
-		exitURL="../wp-content/plugins/wp-chibipaint/inc/cbp_results.php?post=' + post + '"\n\
+		'postURL="../wp-content/plugins/chibipaint-for-wordpress/inc/cbp_save.php?post=' + post + name + slug + pid + edit + '"\n\
+		exitURL="../wp-content/plugins/chibipaint-for-wordpress/inc/cbp_results.php?post=' + post + '"\n\
 		exitURLTarget="cbp-iframe-results" />\n\
 		<input type="button" name="cbp-canvas-start" id="cbp-canvas-cancel" class="button button-primary button-large" value="Cancel" />');
 };
