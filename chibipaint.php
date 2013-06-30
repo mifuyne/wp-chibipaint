@@ -4,7 +4,7 @@
   Plugin URI: http://mifuyne.com/works/projects/wp-chibipaint/
   Description: Integrates Chibipaint java applet with Wordpress"s backend.
   Author: Mifuyne
-  Version: 0.1
+  Version: 2.0
   Author URI: http://Mifuyne.org/
  */
 // ---- Upon activation ---- 

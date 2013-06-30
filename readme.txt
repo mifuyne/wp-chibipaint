@@ -30,6 +30,9 @@ If you have any questions or issues, feel free to post them in Support or the pl
 
 Coming soon
 == Changelog ==
+= 2.0 =
+June 30, 2013: Re-numbered the version to avoid confusion. It is now 2.0, which seems a bit more appropriate. Sorry about the extra update for those who installed already.
+
 = 0.1 =
 
 June 28, 2013: The first release of the rewritten plugin. If you wish to see more details on the process prior to release, then visit the git repository at <a href=\"https://bitbucket.org/Mifuyne/chibipaint-for-wordpress\">https://bitbucket.org/Mifuyne/chibipaint-for-wordpress</a>. Cutting edge version of the plugin can be found there.
